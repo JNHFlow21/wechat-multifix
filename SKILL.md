@@ -15,49 +15,38 @@ allowed-tools:
 
 ---
 
-## 功能概览
+## ⚠️ 安装前必读
 
-| 功能 | 说明 |
-|------|------|
-| 一键安装 | 复制微信 → 修改 Bundle ID → 签名 → 替换图标全自动 |
-| 6种配色 | 黑、青、紫、橙、深蓝、深灰，与原版绿色一眼区分 |
-| 自动修复 | 微信更新后打不开？自动检测并重建 |
-| 数据保全 | 聊天记录在 ~/Library/Containers/，与应用分离 |
-| 多开支持 | WeChat2/3/4/5... 同样流程 |
+**这是安装流程，修复流程在下方「修复打不开的微信2」。**
+
+安装 WeChat2 之前，需要先询问用户想要哪个配色。
 
 ---
 
-## 内置图标
+## 内置图标（6种）
 
-| 图标文件 | 配色 | 预览 |
-|----------|------|------|
-| AppIcon-black.icns | 黑底白标 | 🖤 |
-| AppIcon-cyan.icns | 青底白标 | 🔵 |
-| AppIcon-purple.icns | 紫底白标 | 🟣 |
-| AppIcon-orange.icns | 橙底白标 | 🟠 |
-| AppIcon-navy.icns | 深蓝底白标 | 🔷 |
-| AppIcon-darkgray.icns | 深灰底白标 | ⬛ |
+| 编号 | 图标文件 | 配色 | 主题感 |
+|------|----------|------|--------|
+| 1 | `AppIcon-black.icns` | ⬛ 黑底白标 | 低调、暗黑模式首选 |
+| 2 | `AppIcon-cyan.icns` | 🔵 青底白标 | 清新、科技感 |
+| 3 | `AppIcon-purple.icns` | 🟣 紫底白标 | 优雅、创意 |
+| 4 | `AppIcon-orange.icns` | 🟠 橙底白标 | 活力、温暖 |
+| 5 | `AppIcon-navy.icns` | 🔷 深蓝底白标 | 沉稳、商务 |
+| 6 | `AppIcon-darkgray.icns` | ⬜ 深灰底白标 | 低调、简洁 |
 
----
-
-## 工作原理
-
-**为什么微信多开会冲突？**
-- 每个 macOS 应用有唯一的 Bundle ID
-- 直接复制会导致 Bundle ID 相同，系统冲突，两者都无法启动
-- 解决方法：修改克隆版的 Bundle ID，重新签名
-
-**为什么更新后会坏？**
-- 微信自动更新会覆盖 WeChat2.app 并重置 Bundle ID
-- 修复只需重建，聊天记录不受影响
+**默认：编号 1（黑底白标）**，如果用户没有指定配色，则使用默认值。
 
 ---
 
 ## 一键安装 WeChat2（全新安装）
 
+**安装前必须先询问配色**：告诉用户有6种配色可选，请用户回复编号（1-6）或配色名。如果用户没有明确选择，使用默认的黑底白标。
+
+安装命令：
+
 ```bash
 SKILL_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Claude/Content_Creation/.agents/skills/wechat-multifix"
-ICON_NAME="AppIcon-black.icns"  # 可选: AppIcon-cyan / AppIcon-purple / AppIcon-orange / AppIcon-navy / AppIcon-darkgray
+ICON_NAME="AppIcon-black.icns"  # 根据用户选择替换：cyan / purple / orange / navy / darkgray
 
 # 1. 复制微信
 cp -R /Applications/WeChat.app /Applications/WeChat2.app
@@ -77,13 +66,17 @@ codesign --force --deep --sign - /Applications/WeChat2.app
 # 6. 修复所有权
 chown -R $(whoami):admin /Applications/WeChat2.app
 
-# 7. 替换图标（默认黑底白标）
+# 7. 替换图标
 cp "$SKILL_DIR/icons/$ICON_NAME" /Applications/WeChat2.app/Contents/Resources/AppIcon.icns
 codesign --force --deep --sign - /Applications/WeChat2.app
 
 # 8. 验证
+echo "=== 安装完成 ==="
 echo "WeChat:  $(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' /Applications/WeChat.app/Contents/Info.plist)"
 echo "WeChat2: $(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' /Applications/WeChat2.app/Contents/Info.plist)"
+echo ""
+echo "✅ 可以运行以下命令启动："
+echo "open -a /Applications/WeChat2.app"
 ```
 
 ---
@@ -98,6 +91,8 @@ sleep 0.5 && open -a /Applications/WeChat2.app
 ---
 
 ## 修复打不开的微信2（微信更新后）
+
+**修复时也需要询问配色**（如果用户没有指定，默认为黑底白标）：
 
 ```bash
 SKILL_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Claude/Content_Creation/.agents/skills/wechat-multifix"
@@ -116,9 +111,9 @@ if [ "$ORIG_ID" = "$W2_ID" ] || [ ! -f /Applications/WeChat2.app/Contents/Info.p
     chown -R $(whoami):admin /Applications/WeChat2.app
     cp "$SKILL_DIR/icons/$ICON_NAME" /Applications/WeChat2.app/Contents/Resources/AppIcon.icns
     codesign --force --deep --sign - /Applications/WeChat2.app
-    echo "修复完成！"
+    echo "✅ 修复完成！运行 open -a /Applications/WeChat2.app 启动"
 else
-    echo "WeChat2 状态正常"
+    echo "WeChat2 状态正常，无需修复"
 fi
 ```
 
@@ -126,11 +121,11 @@ fi
 
 ## 多开（WeChat3/4/5...）
 
-替换编号和图标即可：
+替换编号，**询问用户想要哪个配色**：
 
 ```bash
 NUM=3
-ICON_NAME="AppIcon-cyan.icns"  # 每个实例用不同配色
+ICON_NAME="AppIcon-cyan.icns"  # 询问用户选择
 
 rm -rf /Applications/WeChat${NUM}.app
 cp -R /Applications/WeChat.app /Applications/WeChat${NUM}.app
@@ -157,6 +152,14 @@ codesign --force --deep --sign - /Applications/WeChat${NUM}.app
 rm -rf /Applications/WeChat2.app
 rm -rf ~/Library/Containers/com.tencent.xinWeChat2  # 聊天记录（不可逆）
 ```
+
+---
+
+## 工作原理
+
+- **Bundle ID**：每个 macOS 应用唯一标识，直接复制会导致冲突
+- **解决方法**：修改克隆版的 Bundle ID + 重新签名
+- **数据存储**：`~/Library/Containers/com.tencent.xinWeChat2/`（与应用分离，修复不丢数据）
 
 ---
 
