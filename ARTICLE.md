@@ -6,7 +6,7 @@
 
 某个普通的周一早上，我像往常一样打开微信准备处理消息，却发现自己再也无法同时登录两个账号了——工作号和家庭号，必须来回切换。那一刻我意识到：我需要微信双开。
 
-按照一篇网上教程（[[1]](https://github.com/zhuyansen/wx-favorites-report)），我成功配置了微信双开，一切看起来都很美好。直到微信自动更新之后——
+按照 [@jinchenma94](https://x.com/jinchenma94/status/2030152054572994591) 的这篇教程，我成功配置了微信双开，一切看起来都很美好。直到微信自动更新之后——
 
 **两个微信都打不开了。**
 
@@ -91,7 +91,7 @@ macOS 应用签名机制的核心是 Bundle ID 和代码签名：
 
 ## 致谢
 
-本项目的诞生受到了 [@zhuyansen](https://github.com/zhuyansen) 的 [wx-favorites-report](https://github.com/zhuyansen/wx-favorites-report) 项目的启发——那是一个分析微信收藏的精彩工具，让我对微信数据产生了更多好奇。
+本文的核心思路来源于 [@jinchenma94](https://x.com/jinchenma94/status/2030152054572994591) 的推文——正是他那篇「在 Mac 上双开/多开微信指南」让我第一次成功配置了微信双开。本项目在此基础上增加了**一键自动修复**和**多配色图标**功能，将手动流程升级为可复用的 AI Agent Skill。
 
 ---
 
